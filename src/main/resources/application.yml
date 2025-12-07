@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: udp-game-server
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/udp}
+    username: ${PGUSER:postgres}
+    password: ${PGPASSWORD:elma}
+  jpa:
+    hibernate:
+      ddl-auto: update
+  data:
+    redis:
+      url: ${REDIS_URL:redis://localhost:6379}
+      timeout: 5s
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+          min-idle: 0
+  threads:
+    virtual:
+      enabled: true
+
+
+udp:
+  expiresin: 60
+  redishash: v9aK@Jq3!x2Z#DfL7$wPm^E8&rGhN%Uc4*TzBdCqV!s1LpHzXeYg@Mn$QW
+
