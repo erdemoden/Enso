@@ -3,9 +3,9 @@ spring:
     name: udp-game-server
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/udp}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:elma}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -14,8 +14,13 @@ spring:
 
   data:
     redis:
-      url: ${SPRING_DATA_REDIS_URL}
+      url: ${SPRING_DATA_REDIS_URL:redis://localhost:6379}
       timeout: 5s
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+          min-idle: 0
 
   threads:
     virtual:
@@ -23,4 +28,4 @@ spring:
 
 udp:
   expiresin: 60
-  redishash: ${UDP_REDIS_HASH}
+  redishash: ${UDP_REDIS_HASH:v9aK@Jq3!x2Z#DfL7$wPm^E8&rGhN%Uc4*TzBdCqV!s1LpHzXeYg@Mn$QW}
