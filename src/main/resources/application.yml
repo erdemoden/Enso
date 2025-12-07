@@ -4,8 +4,8 @@ spring:
 
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/udp}
-    username: ${DB_USER:postgres}
-    password: ${DB_PASSWORD:elma}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:elma}
     driver-class-name: org.postgresql.Driver
 
   jpa:
