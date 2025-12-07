@@ -1,10 +1,11 @@
 spring:
   application:
     name: udp-game-server
-  datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/udp}
-    username: ${PGUSER:postgres}
-    password: ${PGPASSWORD:elma}
+  spring:
+    datasource:
+      url: jdbc:postgresql://${PGHOST:${POSTGRES_HOST:localhost}}:${PGPORT:${POSTGRES_PORT:5432}}/${PGDATABASE:${POSTGRES_DB:udp}}
+      username: ${PGUSER:postgres}
+      password: ${PGPASSWORD:elma}
   jpa:
     hibernate:
       ddl-auto: update
