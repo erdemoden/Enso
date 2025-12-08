@@ -9,6 +9,6 @@ services:
       UDP_REDIS_HASH: ${UDP_REDIS_HASH:-enso:rooms}
       SERVER_PORT: ${SERVER_PORT:-8080}
     ports:
-      - "8080:8080"
+      - "8081:8081"
       - "11908:11908/tcp"
       - "11907:11907/udp"
