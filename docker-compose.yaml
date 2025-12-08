@@ -7,8 +7,15 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       SPRING_DATA_REDIS_URL: ${SPRING_DATA_REDIS_URL}
       UDP_REDIS_HASH: ${UDP_REDIS_HASH:-enso:rooms}
-      SERVER_PORT: ${SERVER_PORT:-8080}
+      SERVER_PORT: ${SERVER_PORT:-8081}
     ports:
       - "8081:8081"
       - "11908:11908/tcp"
       - "11907:11907/udp"
+    networks:
+      - coolify
+
+networks:
+  coolify:
+    external: true
+    name: coolify
