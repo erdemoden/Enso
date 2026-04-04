@@ -60,8 +60,8 @@ public class ServerService {
 
     public void sendMessage(DatagramSocket server, ServerRequestResponse serverRequestResponse) {
         // TODO : room yoksa falan filan bişeyler
-        RoomDTO roomDTO = redisCacheStore.get(serverRequestResponse.getRoomCode());
-        Map<String, InetSocketAddress> udpUsersInRoom = localRoomService.getUdpUsersFromRoom(roomDTO.getRoomName());
+        //RoomDTO roomDTO = redisCacheStore.get(serverRequestResponse.getRoomCode());
+        Map<String, InetSocketAddress> udpUsersInRoom = localRoomService.getUdpUsersFromRoom(serverRequestResponse.getRoomCode());
         if (udpUsersInRoom != null && !udpUsersInRoom.isEmpty()) {
             for (String user : udpUsersInRoom.keySet()) {
                 if ((serverRequestResponse.getIncludeMe() == null || !serverRequestResponse.getIncludeMe()) && user.equals(serverRequestResponse.getUserCode())) {
@@ -84,6 +84,7 @@ public class ServerService {
             }
         }
     }
+
     @Scheduled(fixedDelay = 15000)
     public void healthCheckOfTcp() {
         log.info("HealthCheck started");
