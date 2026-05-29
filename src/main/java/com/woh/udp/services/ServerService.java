@@ -48,7 +48,7 @@ public class ServerService {
         }
     }
 
-    private void sendMessageToUserTCP(Map<String, Object> message, Socket socketOfUser) {
+    private void sendMessageToUserTCP(ServerRequestResponse message, Socket socketOfUser) {
         try {
             String jsonMessage = objectMapper.writeValueAsString(message);
             PrintWriter writer = new PrintWriter(socketOfUser.getOutputStream(), true);
@@ -80,7 +80,7 @@ public class ServerService {
                 if ((serverRequestResponse.getIncludeMe() == null || !serverRequestResponse.getIncludeMe()) && user.equals(serverRequestResponse.getUserCode())) {
                     continue;
                 }
-                this.sendMessageToUserTCP(serverRequestResponse.getContent(), tcpUsersInRoom.get(user));
+                this.sendMessageToUserTCP(serverRequestResponse, tcpUsersInRoom.get(user));
             }
         }
     }
