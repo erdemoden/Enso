@@ -2,7 +2,6 @@ package com.woh.udp.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.woh.udp.Util.RedisCacheStore;
-import com.woh.udp.dto.GenericResponse;
 import com.woh.udp.dto.RoomDTO;
 import com.woh.udp.dto.ServerRequestResponse;
 import com.woh.udp.strategy.base.ActionStrategy;
@@ -32,6 +31,7 @@ public class Server implements CommandLineRunner {
     ObjectMapper objectMapperPack = new ObjectMapper(new MessagePackFactory());
     private final ServerService serverService;
     private final RedisCacheStore redisCacheStore;
+    private final LocalRoomService localRoomService;
 
     @Override
     public void run(String... args) {
@@ -73,7 +73,6 @@ public class Server implements CommandLineRunner {
             try {
                 final Socket socket = tcpServer.accept();
                 socket.setKeepAlive(true);
-                socket.setSoTimeout(5000);
                 executor.execute(() -> {
                     try {
                         BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -103,15 +102,16 @@ public class Server implements CommandLineRunner {
         } catch (Exception e) {
             log.error("Error : {}", e.getMessage());
         }
-        // log.info("Received packet from {}: {}", packet.getAddress(), server.getPort());
     }
 
     private void handleMessageTcp(String message, Socket socket) {
         try {
             log.info("Gelen TCP mesajı: {}", message);
-            ServerRequestResponse serverRequestResponse = objectMapper.readValue(message, ServerRequestResponse.class);
-            ActionStrategy actionStrategy = (ActionStrategy) applicationContext.getBean(serverRequestResponse.getAction());
-            actionStrategy.performAction(serverRequestResponse, socket);
+            ServerRequestResponse req = objectMapper.readValue(message, ServerRequestResponse.class);
+            localRoomService.updateLastSeen(req.getRoomCode(), req.getUserCode());
+            if (req.getAction().equals("ping")) return;
+            ActionStrategy actionStrategy = (ActionStrategy) applicationContext.getBean(req.getAction());
+            actionStrategy.performAction(req, socket);
         } catch (Exception e) {
             log.error("Error sending response: {}", e.getMessage());
         }

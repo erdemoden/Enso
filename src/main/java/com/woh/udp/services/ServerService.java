@@ -85,24 +85,6 @@ public class ServerService {
         }
     }
 
-    @Scheduled(fixedDelay = 15000)
-    public void healthCheckOfTcp() {
-        log.info("HealthCheck started");
-        Set<LocalRoomDTO> localRoomDTOSet = localRoomService.getLocalRoomDTOS();
-        Set<LocalRoomDTO> usersToRemove = ConcurrentHashMap.newKeySet();
-        Map<String, Object> message = new HashMap<>();
-        message.put("healthCheck","ping");
-        for(LocalRoomDTO localRoomDTO : localRoomDTOSet){
-            try {
-                String jsonMessage = objectMapper.writeValueAsString(message);
-                PrintWriter writer = new PrintWriter(localRoomDTO.getSocket().getOutputStream(), true);
-                writer.println(jsonMessage);
-            }catch (Exception e){
-                log.error("hata");
-            }
-        }
-    }
-
     public void joinRoomUdp(DatagramSocket server, ServerRequestResponse serverRequestResponse, DatagramPacket packet) {
         try {
             RoomDTO roomDTO = redisCacheStore.get(serverRequestResponse.getRoomCode());

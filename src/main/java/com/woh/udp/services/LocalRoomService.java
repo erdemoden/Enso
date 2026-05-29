@@ -5,11 +5,11 @@ import org.springframework.stereotype.Component;
 
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 @Component
 public class LocalRoomService {
@@ -100,6 +100,22 @@ public class LocalRoomService {
         for (LocalRoomDTO localRoomDTO : localRoomDTOS) {
             removeLocalRoomDto(localRoomDTO);
         }
+    }
+    public void removeDisconnectedSocket(Socket socket) {
+        tcpRoomUsers.forEach((roomCode, users) -> {
+            users.entrySet().removeIf(entry -> entry.getValue().equals(socket));
+            if (users.isEmpty()) {
+                tcpRoomUsers.remove(roomCode);
+            }
+        });
+        localRoomDTOS.removeIf(dto -> dto.getSocket().equals(socket));
+    }
+
+    public void updateLastSeen(String roomCode, String userCode) {
+        localRoomDTOS.stream()
+                .filter(dto -> dto.getRoomCode().equals(roomCode) && dto.getUserCode().equals(userCode))
+                .findFirst()
+                .ifPresent(dto -> dto.setWhenMessageArrived(LocalDateTime.now()));
     }
 
     //getters
