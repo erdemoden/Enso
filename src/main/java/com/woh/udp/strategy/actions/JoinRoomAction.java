@@ -38,6 +38,7 @@ public class JoinRoomAction extends ActionStrategy {
                     localRoomService.addTcpConnection(serverRequestResponse.getUserCode(),serverRequestResponse.getRoomCode(),socket);
                     localRoomService.addLocalRoomDto(new LocalRoomDTO(serverRequestResponse.getUserCode(),serverRequestResponse.getRoomCode(),socket));
                     redisCacheStore.put(serverRequestResponse.getRoomCode(), roomDto);
+                    serverRequestResponse.getContent().put("userCode", serverRequestResponse.getUserCode());
                     serverService.sendTcpMessage(serverRequestResponse);
                 } else {
                     throw new BusinessException(ErrorCode.ROOM_IS_FULL);
