@@ -85,13 +85,21 @@ public class ServerService {
         }
     }
 
-    public void sendJoinMessage(ServerRequestResponse serverRequestResponse,Socket socket){
+    public void sendJoinMessage(ServerRequestResponse serverRequestResponse, Socket newSocket) {
         RoomDTO roomDTO = redisCacheStore.get(serverRequestResponse.getRoomCode());
         Map<String, Socket> tcpUsersInRoom = localRoomService.getTcpUsersFromRoom(roomDTO.getRoomName());
-        if (tcpUsersInRoom != null && !tcpUsersInRoom.isEmpty()) {
-          for(int i = 0;i<=tcpUsersInRoom.size()-1;i++){
-              this.sendMessageToUserTCP(serverRequestResponse, socket);
-          }
+        if (tcpUsersInRoom == null || tcpUsersInRoom.isEmpty()) return;
+
+        for (Map.Entry<String, Socket> entry : tcpUsersInRoom.entrySet()) {
+            if (entry.getValue().equals(newSocket)) continue;
+
+            ServerRequestResponse notification = new ServerRequestResponse();
+            notification.setAction("join_room");
+            notification.setRoomCode(serverRequestResponse.getRoomCode());
+            notification.setUserCode(entry.getKey());
+            notification.getContent().put("userCode", entry.getKey());
+
+            this.sendMessageToUserTCP(notification, newSocket);
         }
     }
 
