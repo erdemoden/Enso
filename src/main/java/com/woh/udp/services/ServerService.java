@@ -89,7 +89,7 @@ public class ServerService {
         RoomDTO roomDTO = redisCacheStore.get(serverRequestResponse.getRoomCode());
         Map<String, Socket> tcpUsersInRoom = localRoomService.getTcpUsersFromRoom(roomDTO.getRoomName());
         if (tcpUsersInRoom != null && !tcpUsersInRoom.isEmpty()) {
-          for(int i = 0;i<tcpUsersInRoom.size()-1;i++){
+          for(int i = 0;i<=tcpUsersInRoom.size()-1;i++){
               this.sendMessageToUserTCP(serverRequestResponse, socket);
           }
         }
