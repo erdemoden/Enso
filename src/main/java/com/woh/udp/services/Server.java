@@ -73,6 +73,7 @@ public class Server implements CommandLineRunner {
             try {
                 final Socket socket = tcpServer.accept();
                 socket.setKeepAlive(true);
+                socket.setTcpNoDelay(true);
                 executor.execute(() -> {
                     try {
                         BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
