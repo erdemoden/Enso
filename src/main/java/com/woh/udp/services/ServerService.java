@@ -73,8 +73,7 @@ public class ServerService {
     }
 
     public void sendTcpMessage(ServerRequestResponse serverRequestResponse) {
-        RoomDTO roomDTO = redisCacheStore.get(serverRequestResponse.getRoomCode());
-        Map<String, Socket> tcpUsersInRoom = localRoomService.getTcpUsersFromRoom(roomDTO.getRoomName());
+        Map<String, Socket> tcpUsersInRoom = localRoomService.getTcpUsersFromRoom(serverRequestResponse.getRoomCode());
         if (tcpUsersInRoom != null && !tcpUsersInRoom.isEmpty()) {
             for (String user : tcpUsersInRoom.keySet()) {
                 if ((serverRequestResponse.getIncludeMe() == null || !serverRequestResponse.getIncludeMe()) && user.equals(serverRequestResponse.getUserCode())) {
@@ -86,8 +85,7 @@ public class ServerService {
     }
 
     public void sendJoinMessage(ServerRequestResponse serverRequestResponse, Socket newSocket) {
-        RoomDTO roomDTO = redisCacheStore.get(serverRequestResponse.getRoomCode());
-        Map<String, Socket> tcpUsersInRoom = localRoomService.getTcpUsersFromRoom(roomDTO.getRoomName());
+        Map<String, Socket> tcpUsersInRoom = localRoomService.getTcpUsersFromRoom(serverRequestResponse.getRoomCode());
         if (tcpUsersInRoom == null || tcpUsersInRoom.isEmpty()) return;
 
         for (Map.Entry<String, Socket> entry : tcpUsersInRoom.entrySet()) {
@@ -105,9 +103,8 @@ public class ServerService {
 
     public void joinRoomUdp(DatagramSocket server, ServerRequestResponse serverRequestResponse, DatagramPacket packet) {
         try {
-            RoomDTO roomDTO = redisCacheStore.get(serverRequestResponse.getRoomCode());
             InetSocketAddress inetSocketAddress = new InetSocketAddress(packet.getAddress(), packet.getPort());
-            localRoomService.addUdpConnection(serverRequestResponse.getUserCode(), roomDTO.getRoomName(), inetSocketAddress);
+            localRoomService.addUdpConnection(serverRequestResponse.getUserCode(), serverRequestResponse.getRoomCode(), inetSocketAddress);
             ServerRequestResponse response = new ServerRequestResponse();
             response.getContent().put("join", "true");
             byte[] buffer = objectMapper.writeValueAsBytes(response);

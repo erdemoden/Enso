@@ -50,7 +50,7 @@ public class JoinRoomAction extends ActionStrategy {
                 throw new BusinessException(ErrorCode.ROOM_NOT_EXIST);
             }
         } catch (Exception e) {
-            throw new BusinessException(ErrorCode.JOIN_ROOM_ERROR);
+            log.error("There is an Error : ",e);
         } finally {
             if (lockAcquired) {
                 redisCacheStore.delete(lockKey);
