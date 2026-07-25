@@ -41,6 +41,7 @@ public class JoinRoomAction extends ActionStrategy {
                     serverRequestResponse.getContent().put("userCode", serverRequestResponse.getUserCode());
                     serverService.sendTcpMessage(serverRequestResponse);
                     serverService.sendJoinMessage(serverRequestResponse,socket);
+                    log.info("user is entered the room availableSlots: {} userIds: {}",roomDto.getAvailableSlots(),roomDto.getUserIds());
                 } else {
                     throw new BusinessException(ErrorCode.ROOM_IS_FULL);
                 }

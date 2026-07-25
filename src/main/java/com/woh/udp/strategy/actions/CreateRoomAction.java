@@ -28,6 +28,7 @@ public class CreateRoomAction extends ActionStrategy {
                     .userIds(new ArrayList<>(List.of(serverRequestResponse.getUserCode())))
                     .roomName(serverRequestResponse.getRoomCode())
                     .totalSlots(serverRequestResponse.getRoomSlots())
+                    .availableSlots(serverRequestResponse.getRoomSlots())
                     .build();
 
             redisCacheStore.put(serverRequestResponse.getRoomCode(),roomDTO);
