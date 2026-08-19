@@ -95,6 +95,7 @@ public class Server implements CommandLineRunner {
         try {
             byte[] data = Arrays.copyOf(packet.getData(), packet.getLength());
             ServerRequestResponse serverRequestResponse = objectMapperPack.readValue(data, ServerRequestResponse.class);
+            log.info("serverRequestResponse is : {} ",serverRequestResponse);
             if (serverRequestResponse.getAction().equals("join_room") || serverRequestResponse.getAction().equals("create_room")) {
                 serverService.joinRoomUdp(server, serverRequestResponse, packet);
             } else {
