@@ -107,7 +107,7 @@ public class ServerService {
             localRoomService.addUdpConnection(serverRequestResponse.getUserCode(), serverRequestResponse.getRoomCode(), inetSocketAddress);
             ServerRequestResponse response = new ServerRequestResponse();
             response.getContent().put("join", "true");
-            byte[] buffer = objectMapper.writeValueAsBytes(response);
+            byte[] buffer = objectMapperPack.writeValueAsBytes(response);
             DatagramPacket sendPacket = new DatagramPacket(buffer, buffer.length, packet.getAddress(), packet.getPort());
             server.send(sendPacket);
             log.info("Welcome user : " + localRoomService.getUdpUsersFromRoom(serverRequestResponse.getRoomCode()).get(serverRequestResponse.getUserCode()));
