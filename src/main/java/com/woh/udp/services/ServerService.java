@@ -111,7 +111,7 @@ public class ServerService {
             this.sendMessage(server,response);
             log.info("Welcome user : " + localRoomService.getUdpUsersFromRoom(serverRequestResponse.getRoomCode()).get(serverRequestResponse.getUserCode()));
         } catch (Exception e) {
-            log.error("Something went wrong join room udp : {}",e.getMessage());
+            log.error("Something went wrong join room udp : {}",e);
         }
     }
 
