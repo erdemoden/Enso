@@ -107,9 +107,8 @@ public class ServerService {
             localRoomService.addUdpConnection(serverRequestResponse.getUserCode(), serverRequestResponse.getRoomCode(), inetSocketAddress);
             ServerRequestResponse response = new ServerRequestResponse();
             response.getContent().put("join", "true");
-            byte[] buffer = objectMapperPack.writeValueAsBytes(response);
-            DatagramPacket sendPacket = new DatagramPacket(buffer, buffer.length, packet.getAddress(), packet.getPort());
-            server.send(sendPacket);
+            response.setUserCode(serverRequestResponse.getUserCode());
+            this.sendMessageToUser(inetSocketAddress,response,server);
             log.info("Welcome user : " + localRoomService.getUdpUsersFromRoom(serverRequestResponse.getRoomCode()).get(serverRequestResponse.getUserCode()));
         } catch (Exception e) {
             log.error("Something went wrong join room udp ");
