@@ -103,13 +103,14 @@ public class ServerService {
 
     public void joinRoomUdp(DatagramSocket server, ServerRequestResponse serverRequestResponse, DatagramPacket packet) {
         try {
+            log.info("Server request response for join room : {}",serverRequestResponse);
             InetSocketAddress inetSocketAddress = new InetSocketAddress(packet.getAddress(), packet.getPort());
             localRoomService.addUdpConnection(serverRequestResponse.getUserCode(), serverRequestResponse.getRoomCode(), inetSocketAddress);
             ServerRequestResponse response = new ServerRequestResponse();
             response.getContent().put("join", "true");
             response.setUserCode(serverRequestResponse.getUserCode());
             this.sendMessage(server,response);
-            log.info("Welcome user : " + localRoomService.getUdpUsersFromRoom(serverRequestResponse.getRoomCode()).get(serverRequestResponse.getUserCode()));
+            log.info("Welcome user : {}",localRoomService.getUdpUsersFromRoom(serverRequestResponse.getRoomCode()).get(serverRequestResponse.getUserCode()));
         } catch (Exception e) {
             log.error("Something went wrong join room udp : ",e);
         }
