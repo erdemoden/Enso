@@ -44,6 +44,13 @@ public class Server implements CommandLineRunner {
                     .userIds(new ArrayList<>())
                     .ownerUser("erdem").build();
             redisCacheStore.put("room_123", roomDTO);
+            RoomDTO roomDTO1 = RoomDTO.builder()
+                    .roomName("plugin-game")
+                    .availableSlots(2000000000)
+                    .totalSlots(2000000000)
+                    .userIds(new ArrayList<>())
+                    .ownerUser("erdem").build();
+            redisCacheStore.put("plugin-game",roomDTO1);
             server = new DatagramSocket(11907);
             System.out.println("UDP Server started");
             tcpServer = new ServerSocket(11908);
@@ -98,7 +105,11 @@ public class Server implements CommandLineRunner {
             log.info("serverRequestResponse is : {} ",serverRequestResponse);
             if (serverRequestResponse.getAction().equals("join_room") || serverRequestResponse.getAction().equals("create_room")) {
                 serverService.joinRoomUdp(server, serverRequestResponse, packet);
-            } else {
+            }
+            else if (serverRequestResponse.getAction().equals("leave_room")){
+                serverService.leaveRoomUdp(server,serverRequestResponse);
+            }
+            else {
                 serverService.sendMessage(server, serverRequestResponse);
             }
         } catch (Exception e) {

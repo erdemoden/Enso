@@ -116,6 +116,20 @@ public class ServerService {
             log.error("Something went wrong join room udp : ",e);
         }
     }
+    public void leaveRoomUdp(DatagramSocket server, ServerRequestResponse serverRequestResponse){
+        try {
+            log.info("Server request response for leave room : {}",serverRequestResponse);
+            localRoomService.removeUdpConnection(serverRequestResponse.getUserCode(), serverRequestResponse.getRoomCode());
+            ServerRequestResponse response = new ServerRequestResponse();
+            response.getContent().put("leave", "true");
+            response.setUserCode(serverRequestResponse.getUserCode());
+            response.setRoomCode(serverRequestResponse.getRoomCode());
+            this.sendMessage(server,response);
+            log.info("GoodBye  user : {}",localRoomService.getUdpUsersFromRoom(serverRequestResponse.getRoomCode()).get(serverRequestResponse.getUserCode()));
+        } catch (Exception e) {
+            log.error("Something went wrong join room udp : ",e);
+        }
+    }
 
     public void deletedRoomUsers(ServerRequestResponse serverRequestResponse) {
         RoomDTO roomDTO = redisCacheStore.get(serverRequestResponse.getRoomCode());
