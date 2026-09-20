@@ -120,6 +120,7 @@ public class ServerService {
         try {
             log.info("Server request response for leave room : {}",serverRequestResponse);
             localRoomService.removeUdpConnection(serverRequestResponse.getUserCode(), serverRequestResponse.getRoomCode());
+            localRoomService.removeTcpConnection(serverRequestResponse.getRoomCode(),serverRequestResponse.getUserCode());
             ServerRequestResponse response = new ServerRequestResponse();
             response.getContent().put("leave", "true");
             response.setUserCode(serverRequestResponse.getUserCode());
