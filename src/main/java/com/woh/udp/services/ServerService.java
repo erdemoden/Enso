@@ -5,6 +5,8 @@ import com.woh.udp.Util.RedisCacheStore;
 import com.woh.udp.dto.LocalRoomDTO;
 import com.woh.udp.dto.RoomDTO;
 import com.woh.udp.dto.ServerRequestResponse;
+import com.woh.udp.enums.ErrorCode;
+import com.woh.udp.errors.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.msgpack.jackson.dataformat.MessagePackFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -118,9 +120,21 @@ public class ServerService {
     }
     public void leaveRoomUdp(DatagramSocket server, ServerRequestResponse serverRequestResponse){
         try {
+            boolean lock = redisCacheStore.setIfAbsent(serverRequestResponse.getRoomCode() + "lock", "availableSlots", 2);
             log.info("Server request response for leave room : {}",serverRequestResponse);
-            localRoomService.removeUdpConnection(serverRequestResponse.getUserCode(), serverRequestResponse.getRoomCode());
-            localRoomService.removeTcpConnection(serverRequestResponse.getRoomCode(),serverRequestResponse.getUserCode());
+            RoomDTO roomDto = redisCacheStore.get(serverRequestResponse.getRoomCode());
+            if(lock && roomDto !=null){
+                if (roomDto.getUserIds().remove(serverRequestResponse.getUserCode())) {
+                    Integer availableSlots = roomDto.getAvailableSlots();
+                    roomDto.setAvailableSlots(availableSlots != null ? availableSlots + 1 : 1);
+                    localRoomService.removeTcpConnection(serverRequestResponse.getRoomCode(),serverRequestResponse.getUserCode());
+                    localRoomService.removeUdpConnection(serverRequestResponse.getRoomCode(),serverRequestResponse.getUserCode());
+                    localRoomService.removeLocalRoomDto(serverRequestResponse.getRoomCode(),serverRequestResponse.getUserCode());
+                    redisCacheStore.put(serverRequestResponse.getRoomCode(), roomDto);
+                } else {
+                    throw new BusinessException(ErrorCode.USER_NOT_IN_ROOM);
+                }
+            }
             ServerRequestResponse response = new ServerRequestResponse();
             response.getContent().put("leave", "true");
             response.setUserCode(serverRequestResponse.getUserCode());
