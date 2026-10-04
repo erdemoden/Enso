@@ -127,6 +127,7 @@ public class ServerService {
                 if (roomDto.getUserIds().remove(serverRequestResponse.getUserCode())) {
                     Integer availableSlots = roomDto.getAvailableSlots();
                     roomDto.setAvailableSlots(availableSlots != null ? availableSlots + 1 : 1);
+                    log.info("GoodBye  user : {}",localRoomService.getUdpUsersFromRoom(serverRequestResponse.getRoomCode()).get(serverRequestResponse.getUserCode()));
                     localRoomService.removeTcpConnection(serverRequestResponse.getRoomCode(),serverRequestResponse.getUserCode());
                     localRoomService.removeUdpConnection(serverRequestResponse.getRoomCode(),serverRequestResponse.getUserCode());
                     localRoomService.removeLocalRoomDto(serverRequestResponse.getRoomCode(),serverRequestResponse.getUserCode());
@@ -140,7 +141,6 @@ public class ServerService {
             response.setUserCode(serverRequestResponse.getUserCode());
             response.setRoomCode(serverRequestResponse.getRoomCode());
             this.sendMessage(server,response);
-            log.info("GoodBye  user : {}",localRoomService.getUdpUsersFromRoom(serverRequestResponse.getRoomCode()).get(serverRequestResponse.getUserCode()));
         } catch (Exception e) {
             log.error("Something went wrong join room udp : ",e);
         }
